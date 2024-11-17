@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: linear-gradient(to right, #396bca, #4cbed9);
+        }
+
+        .big_box {
+            margin: 150px auto;
+            width: 530px;
+            height: 450px;
+            display: flex;
+            justify-content: center;
+            background-color: white;
+            box-sizing: border-box;
+            border-radius: 7px;
+        }
+
+        .big_box > .box {
+            margin-top: 115px;
+            width: 476px;
+            height: 256px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .big_box > .box > input {
+            display: block;
+            width: 100%;
+            height: 50px;
+            border: 1px solid #dfdfe1;
+            border-radius: 4px;
+            padding-left: 20px;
+            box-sizing: border-box;
+        }
+
+        button {
+            width: 476px;
+            height: 50px;
+            background: linear-gradient(to right, #396bca, #4cbed9);
+            border: 1px solid #dfdfe1;
+            border-radius: 4px;
+            cursor: pointer;
+            color: white;
+        }
+
+        a {
+            width: 100%;
+            height: 50px;
+            font-size: 18px;
+            text-decoration-line: none;
+            color: black;
+            display: block;
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+
+<div class="big_box">
+    <div class="box">
+        <input type="text" placeholder="账号">
+        <input type="password" placeholder="密码">
+        <button>登录</button>
+        <a href="register.html">去注册</a>
+    </div>
+</div>
+
+<script  src="js/axios.js"></script>
+<script>
+    axios.defaults.baseURL = 'http://localhost:8888/';
+
+    let inputs = [...document.querySelectorAll('.big_box > .box > input')];
+
+    if (localStorage.getItem('user_id')) {
+        axios.get(
+            'users/info',
+            {
+                params: {
+                    id: Number(localStorage.getItem('user_id'))
+                },
+                headers: {
+                    authorization: localStorage.getItem('token')
+                }
+            }
+        ).then(location.href = 'index.html');
+    }
+
+    document.querySelector('button').onclick = ev => {
+        // ev.preventDefault();
+        if(inputs.some(item => item.value === '')) return console.log('信息不全');
+        // console.log(inputs[0].value, inputs[1].value);
+        axios.post(
+            'users/login',
+            {
+                username: inputs[0].value,
+                password: inputs[1].value,
+            },
+            {
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                }
+            }
+        ).then(res => {
+            console.log(res)
+            localStorage.setItem('user_id', String(res.data.user.id));
+            localStorage.setItem('token', res.data.token);
+            localStorage.setItem('nickname', res.data.user.nickname);
+            if (Number(localStorage.getItem('detail'))) {
+                localStorage.setItem('detail_clear', 'true');
+                location.href = 'detail.html?goods_id=' + localStorage.getItem('detail');
+            } else location.href = 'index.html';
+        }).catch(error => {
+            console.log(error.message);
+        });
+    }
+</script>
+</body>
+</html>

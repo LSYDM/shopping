@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="css/goods_list.css">
+</head>
+<body>
+    <header>
+        <ul>
+            <li>湖北</li>
+            <li>username</li>
+        </ul>
+        <ul>
+            <li class="cart">购物车</li>
+            <li>2</li>
+            <li>个人中心</li>
+        </ul>
+    </header>
+    <nav>
+        <div class="search">
+            <input placeholder="usb充电线">
+            <button>搜索</button>
+        </div>
+        <div class="filter_menu">
+            <ul>
+                <li>商品类型:</li>
+                <li>热销</li>
+                <li>折扣</li>
+            </ul>
+            <ul>
+                <li>排序类型:</li>
+                <li>综合</li>
+                <li>折扣</li>
+                <li>价格</li>
+            </ul>
+            <ul>
+                <li>升序降序:</li>
+                <li>升序</li>
+                <li>降序</li>
+            </ul>
+        </div>
+    </nav>
+    <div class="goods"></div>
+    <footer>
+        <ul>
+            <li class="up_btn">上一页</li>
+<!--            <li>1</li>-->
+<!--            <li>2</li>-->
+<!--            <li>3</li>-->
+<!--            <li>4</li>-->
+<!--            <li>5</li>-->
+            <li class="down_btn">下一页</li>
+        </ul>
+<!--        <input type="text">-->
+<!--        <button>点击跳转</button>-->
+    </footer>
+</body>
+<script src="js/axios.js"></script>
+<script>
+    let goods = document.querySelector('.goods'), to_cart = document.querySelector('.cart');
+    let footer_ul = document.querySelector('footer > ul');
+    let pages = 0;
+    axios.defaults.baseURL = 'http://127.0.0.1:8888/'
+    let filter_menu = [...document.querySelector('.filter_menu').children];
+    let form_obj = {
+        current : 1,
+        pagesize: 15,
+        search: '',  // search
+        filter: '',  // hot,sale
+        saleType: 10,
+        sortType: 'id',  // id || sale || price
+        sortMethod: 'ASC',  // ASC || DESC
+        category: ''
+    }
+
+    document.querySelector('header > ul > :nth-child(2)').innerText = localStorage.getItem('nickname');
+
+
+    filter_menu.forEach((ul, ul_index) => {
+        ul.children.filter = Array.prototype.filter;
+        Object.defineProperty(ul.children, 'filter', {enumerable: false});
+        ul = ul.children.filter((li, index) => {
+            if (index >= 1) return li;
+        });
+        ul.forEach((li, li_index) => li.onclick = () => {
+            if ([...li.classList].find(value => value === 'active')) {
+                li.className = '';
+                if (ul_index === 0) {
+                    form_obj.filter = '';
+                } else if (ul_index === 1) {
+                    form_obj.sortType = 'id';
+                } else {
+                    form_obj.sortMethod = 'ASC'
+                }
+            } else {
+                ul.forEach(item => item.className = '');
+                li.className = 'active';
+                if (ul_index === 0) {
+                    if (li_index === 0) {
+                        form_obj.filter = 'hot';
+                    } else form_obj.filter = 'sale';
+                } else if (ul_index === 1) {
+                    if (li_index === 0) {
+                        form_obj.sortType = 'id';
+                    } else if (li_index === 1) {
+                        form_obj.sortType = 'sale';
+                    } else form_obj.sortType = 'price';
+                } else {
+                    if (li_index === 0) {
+                        form_obj.sortMethod = 'ASC';
+                    } else form_obj.sortMethod = 'DESC';
+                }
+            }
+            // 获取商品列表
+            get_goods();
+        });
+    });
+
+
+    function get_goods_classify () {
+        axios.get('/goods/category').then(res => {
+            // console.log(res);
+            let category = document.createElement('ul');
+            let li_f = document.createElement('li');
+            li_f.innerText = '商品分类:';
+            category.appendChild(li_f);
+            category.children.forEach = Array.prototype.forEach;
+            Object.defineProperty(category.children, 'forEach', {enumerable: false});
+            res.data.list.forEach(value => {
+                let li = document.createElement('li');
+                li.innerText = value;
+                li.onclick = () => {
+                    if ([...li.classList].find(value => value === 'active')) {
+                        li.className = '';
+                        form_obj.category = '';
+                    } else {
+                        category.children.forEach(item => item.className = '');
+                        li.className = 'active';
+                        form_obj.category = li.innerText;
+                    }
+                    // 获取商品列表
+                    get_goods();
+                }
+                category.appendChild(li);
+            });
+            let filter_menu = document.querySelector('nav > .filter_menu');
+            filter_menu.insertBefore(category, filter_menu.children[0])
+        });
+    }
+
+
+    function get_goods (status=true) {
+        goods.innerHTML = '';
+        axios.get('goods/list', {
+            params: form_obj
+        }).then(res => {
+            // console.log(res);
+            res.data.list.forEach(value => {
+                let div1 = document.createElement('div');
+                div1.className = 'good';
+                div1.style.border = '1px solid white';
+                div1.onmouseenter = ev => div1.style.border = '1px solid #b32d46';
+                div1.onmouseleave = ev => div1.style.border = '1px solid white';
+                let img1 = document.createElement('img');
+                let p1 = document.createElement('p');
+                let span1 = document.createElement('span');
+                img1.setAttribute('src', value.img_big_logo);
+                p1.innerText = value.title;
+                span1.innerText = `￥${value.price}`;
+                div1.appendChild(img1);
+                div1.appendChild(p1);
+                div1.appendChild(span1);
+                div1.onclick = () => {
+                    // location.href = 'detail.html?goods_id=' + value.goods_id;
+                    open('detail.html?goods_id=' + value.goods_id);
+                    // document.body.innerHTML = ''
+                }
+                goods.appendChild(div1);
+            });
+            if (status) {
+                pages = res.data.total;
+                flush_page(pages);
+            } else {}
+        });
+    }
+
+
+    function flush_page(pages) {
+        let page_index = 1;
+        while (footer_ul.children[1].className !== 'down_btn') {
+            footer_ul.removeChild(footer_ul.children[1]);
+        }
+        if (pages > 5) {
+            for (let index = 0; index < 5; index ++) {
+                let li = document.createElement('li');
+                li.innerText = String(page_index);
+                footer_ul.insertBefore(li, footer_ul.lastElementChild);
+                page_index ++;
+            }
+        } else {
+            for (let index = 0; index < pages; index ++) {
+                let li = document.createElement('li');
+                li.innerText = String(page_index);
+                footer_ul.insertBefore(li, footer_ul.lastElementChild);
+                page_index ++;
+            }
+        }
+        footer_ul.children[1].className = 'active';
+    }
+
+
+    footer_ul.onclick = ev => {
+        let look_index = 3, ul_c = [...footer_ul.children], active_index = Number(ul_c.find(value => value.className === 'active').innerText);
+
+        if (ev.target.className !== 'active' && ev.target.tagName === 'LI') {
+            if (active_index !== 1 && ev.target.className === 'up_btn') {
+                ul_c.slice(1, -1).forEach(value => value.className = '');
+                active_index --;
+                // console.log(active_index);
+                if (active_index >= look_index) {
+                    ul_c.slice(1, -1).forEach(value => value.innerText = String(Number(value.innerText) - 1));
+                    ul_c[look_index].className = 'active';
+                } else ul_c[active_index].className = 'active';
+                form_obj.current = active_index;
+                get_goods(status=false);
+            }
+
+            if (active_index !== pages && ev.target.className === 'down_btn') {
+                ul_c.slice(1, -1).forEach(value => value.className = '');
+                active_index ++;
+                // console.log(active_index, look_index)
+                if (active_index > look_index) {
+                    ul_c.slice(1, -1).forEach(value => value.innerText = String(Number(value.innerText) + 1));
+                    ul_c[look_index].className = 'active';
+                } else ul_c[active_index].className = 'active';
+                form_obj.current = active_index;
+                get_goods(status=false);
+            }
+
+            if (ev.target.className === '') {
+                // ul_c.slice(1, -1).forEach(value => value.className = '');
+                // ev.target.className = 'active';
+                active_index = Number(ev.target.innerText);
+                let current_index = ul_c.indexOf(ev.target);
+                console.log(active_index, current_index, look_index)
+                if (current_index >= look_index) {
+                    if (active_index <= pages - 2) {
+                        ul_c.slice(1, -1).forEach(value => value.innerText = String(Number(value.innerText) + current_index - look_index));
+                        ul_c.slice(1, -1).forEach(value => value.className = '');
+                        ul_c[look_index].className = 'active';
+                    } else {
+                        ul_c.slice(1, -1).forEach(value => value.className = '');
+                        ul_c[current_index].className = 'active';
+                    }
+                    // console.log(current_index)
+                }
+
+                if (current_index <= look_index) {
+                    if (current_index <= look_index && Number(ul_c[look_index].innerText) > look_index) {
+                        ul_c.slice(1, -1).forEach(value => value.innerText = String(Number(value.innerText) + current_index - look_index));
+                        ul_c.slice(1, -1).forEach(value => value.className = '');
+                        ul_c[look_index].className = 'active';
+                    } else {
+                        ul_c.slice(1, -1).forEach(value => value.className = '');
+                        ul_c[current_index].className = 'active';
+                    }
+                    // console.log(current_index)
+                }
+                form_obj.current = active_index;
+                get_goods(status=false);
+            }
+        }
+    }
+
+
+    to_cart.onclick = () => {
+        location.href = 'cart.html';
+    }
+
+
+    get_goods_classify()
+    get_goods();
+</script>
+</html>

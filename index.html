@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="./css/index.css">
+</head>
+<body>
+
+</body>
+<script>
+    let hello = document.createElement('span'), a1 = document.createElement('a');
+    let nickname = localStorage.getItem('nickname');
+
+    a1.style.textDecorationLine = 'none';
+    a1.style.color = 'red';
+    a1.style.cursor = 'pointer';
+    a1.setAttribute('href', 'login.html');
+    if (nickname) {
+        hello.innerText = `你好, ${nickname}, `;
+        hello.style.cursor = 'default';
+        a1.innerText = '登出';
+        a1.onclick = e => localStorage.clear();
+    } else {
+        hello.innerText = `你好, `;
+        a1.innerText = '请登录';
+    }
+
+    document.body.appendChild(hello);
+    document.body.appendChild(a1);
+
+    let goods = document.createElement('span');
+    goods.innerText = '商品页';
+    goods.style.cursor = 'pointer';
+    goods.onclick = e => location.href = 'goods_list.html';
+    document.body.appendChild(goods);
+</script>
+</html>

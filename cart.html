@@ -1,0 +1,303 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="./css/cart.css">
+</head>
+<body>
+    <header>
+        <ul>
+            <li>湖北</li>
+            <li>username</li>
+        </ul>
+        <ul>
+            <li>商品页</li>
+            <li>2</li>
+            <li>个人中心</li>
+        </ul>
+    </header>
+    <table>
+        <thead>
+            <tr>
+                <th>
+                    <input type="checkbox" name="select_all">
+                    <span>全选</span>
+                </th>
+                <th>商品</th>
+                <th>单价</th>
+                <th>数量</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+<!--            <tr>-->
+<!--                <td><input type="checkbox"></td>-->
+<!--                <td><img src="" alt=""><p></p></td>-->
+<!--                <td></td>-->
+<!--                <td></td>-->
+<!--                <td>删除</td>-->
+<!--            </tr>-->
+        </tbody>
+    </table>
+    <footer>
+        <div>
+            <input type="checkbox" name="select_all">
+            <span>全选</span>
+            <span>删除选中的商品</span>
+        </div>
+        <div>
+            <span>已选择0件商品</span>
+            <span>总价: <span>0</span></span>
+            <button>去结算</button>
+        </div>
+    </footer>
+</body>
+<script  src="js/axios.js"></script>
+<script>
+    // let goods_cart = (new Function('', `return ${localStorage.getItem('goods_cart')}`))() ?? [],
+    //     thead = document.getElementsByTagName('thead')[0],
+    //     tbody = document.getElementsByTagName('tbody')[0];
+    // console.log(goods_cart, thead, tbody)
+
+    let table = document.querySelector('table'),
+        tbody = table.querySelector('tbody'),
+        span_price = document.querySelector('footer > :last-child > :nth-child(2) > span'),
+        to_goods_list = document.querySelector('header > :last-child > :first-child'),
+        delete_select = document.querySelector('footer > :first-child > :last-child'),
+        select_all = document.querySelectorAll('input[name=select_all]');
+
+    axios.defaults.baseURL = 'http://127.0.0.1:8888/'
+
+    to_goods_list.onclick = () => location.href = 'goods_list.html'
+    if (Number(localStorage.getItem('user_id'))) {
+        document.querySelector('header > ul > :nth-child(2)').innerText = localStorage.getItem('nickname');
+        axios.get(
+            'cart/list',
+            {
+                params: {
+                    id: Number(localStorage.getItem('user_id'))
+                },
+                headers: {
+                    authorization: localStorage.getItem('token')
+                }
+            }
+        ).then(function (res) {
+            // console.log(res.data.cart)
+            if (res.data.code === 0 || res.data.code === 401) {
+                localStorage.clear();
+                location.href = 'login.html';
+            }
+
+            res.data.cart.forEach(item => {
+                let tr = document.createElement('tr'),
+                    td1 = document.createElement('td'),
+                    td2 = document.createElement('td'),
+                    td3 = document.createElement('td'),
+                    td4 = document.createElement('td'),
+                    td4_div = document.createElement('div'),
+                    td4_reduce = document.createElement('button'),
+                    td4_span = document.createElement('span'),
+                    td4_add = document.createElement('button'),
+                    td5 = document.createElement('td'),
+                    td1_input = document.createElement('input'),
+                    td2_img = document.createElement('img'),
+                    td2_p = document.createElement('p');
+
+                td1_input.type = 'checkbox';
+                td1_input.setAttribute('name', 'select_one');
+                td1_input.onclick = () => {
+                    let total_price = 0;
+                    let select_one = document.querySelectorAll('input[name=select_one]');
+                    if ([...select_one].every(select => select.checked === true)) {
+                        [...select_all].forEach(all2 => all2.checked = true);
+                    } else [...select_all].forEach(all2 => all2.checked = false);
+
+                    [...select_one].filter(one => one.checked).forEach(inp => {
+                        let good_price = Number(inp.parentElement.parentElement.children[2].innerText);
+                        let good_num = Number(inp.parentElement.parentElement.children[3].children[0].children[1].innerText);
+                        // console.log(good_price, good_num, good_price * good_num);
+                        total_price += Number((good_price * good_num).toFixed(2));
+                    })
+                    span_price.innerText = `￥${total_price}`;
+                }
+                td1.appendChild(td1_input);
+                td2_img.setAttribute('src', item.img_small_logo);
+                td2_p.innerText = item.title;
+                td2.appendChild(td2_img);
+                td2.appendChild(td2_p);
+                td3.innerText = item.current_price;
+                td4_reduce.innerText = '-';
+
+                td4_span.innerText = item.cart_number;
+                td4_add.innerText = '+';
+                td4_div.appendChild(td4_reduce);
+                td4_div.appendChild(td4_span);
+                td4_div.appendChild(td4_add);
+                td4.appendChild(td4_div);
+                td5.innerText = '删除';
+                td5.setAttribute('data-goods_id', item.goods_id);
+                td2.style.cursor = 'default';
+                td3.style.cursor = 'default';
+                td4.style.cursor = 'default';
+                td5.style.cursor = 'pointer';
+
+                td5.onclick = ev => {
+                    axios.get('cart/remove', {
+                        params: {
+                            id: Number(localStorage.getItem('user_id')),
+                            goodsId: Number(ev.target.dataset.goods_id)
+                        },
+                        headers: {
+                            authorization: localStorage.getItem('token')
+                        }
+                    }).then(res => {
+                        if (res.data.code === 1) {
+                            ev.target.parentElement.remove();
+                        }
+                    })
+                    // console.log(ev.target.dataset.goods_id)
+                }
+
+                td4_add.onclick = () => {
+                    axios.post('cart/add', {
+                        id: Number(localStorage.getItem('user_id')),
+                        goodsId: item.goods_id,
+                    }, {
+                        headers: {
+                            authorization: localStorage.getItem('token'),
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        }
+                    }).then(result => {
+                        // console.log(result)
+                        if (result.data.code === 1) {
+                            axios.get(
+                                'cart/list',
+                                {
+                                    params: {
+                                        id: Number(localStorage.getItem('user_id'))
+                                    },
+                                    headers: {
+                                        authorization: localStorage.getItem('token')
+                                    }
+                                }
+                            ).then(update_goods_num => {
+                                // console.log(update_goods_num.data.cart)
+                                td4_span.innerText = update_goods_num.data.cart.find(good => good.goods_id === item.goods_id).cart_number;
+                                let inp = td4_add.parentElement.parentElement.parentElement.firstElementChild.firstElementChild;
+                                // console.log(inp)
+                                // console.log(inp.checked)
+                                if (inp.checked) {
+                                    inp.click();
+                                    inp.click();
+                                }
+                            })
+                        } else {
+                            location.href = 'login.html';
+                        }
+                    })
+                }
+
+                td4_reduce.onclick = ev => {
+                    let cart_number = 1;
+                    async function get_cart_list() {
+                        return await axios.get(
+                            'cart/list',
+                            {
+                                params: {
+                                    id: Number(localStorage.getItem('user_id'))
+                                },
+                                headers: {
+                                    authorization: localStorage.getItem('token')
+                                }
+                            }
+                        )
+                    }
+
+                    get_cart_list().then(res2 => {
+                        // console.log(res2.data.cart);
+                        cart_number = res2.data.cart.find(
+                            value => value.goods_id === Number(ev.target.parentElement.parentElement.parentElement.lastElementChild.dataset.goods_id)
+                            ).cart_number
+                        // console.log(cart_number)
+
+                        if (cart_number > 1) {
+                            axios.post('cart/number',
+                                {
+                                    id: Number(localStorage.getItem('user_id')),
+                                    goodsId: item.goods_id,
+                                    number: Number(cart_number - 1)
+                                },
+                                {
+                                headers: {
+                                    authorization: localStorage.getItem('token'),
+                                    'Content-Type': 'application/x-www-form-urlencoded',
+                                }
+                            }).then(result => {
+                                // console.log(result.data)
+                                // console.log(item)
+                                if (result.data.code === 1) {
+                                    get_cart_list().then(update_goods_num => {
+                                        td4_span.innerText = String(cart_number - 1);
+                                        let inp = td4_add.parentElement.parentElement.parentElement.firstElementChild.firstElementChild;
+                                        if (inp.checked) {
+                                            inp.click();
+                                            inp.click();
+                                        }
+                                        // console.log(update_goods_num.data);
+                                    })
+                                } else {
+                                    location.href = 'login.html';
+                                }
+                            })
+                        }
+                    })
+                }
+
+                tr.appendChild(td1)
+                tr.appendChild(td2)
+                tr.appendChild(td3)
+                tr.appendChild(td4)
+                tr.appendChild(td5);
+                tbody.appendChild(tr);
+            });
+        });
+
+        [...select_all].forEach(all => {
+                all.onclick = () => {
+                    // console.log(all.checked);
+                    let total_price = 0;
+                    let select_one = document.querySelectorAll('input[name=select_one]');
+                    if (all.checked) {
+                        // console.log([...tbody.children]);
+                        [...select_one].forEach(one => {
+                            one.checked = true;
+                            let good_price = Number(one.parentElement.parentElement.children[2].innerText);
+                            let good_num = Number(one.parentElement.parentElement.children[3].children[0].children[1].innerText);
+                            // console.log(good_price, good_num, good_price * good_num);
+                            total_price += Number((good_price * good_num).toFixed(2));
+                        });
+                        [...select_all].forEach(all2 => all2.checked = true);
+                        span_price.innerText = String(total_price)
+                    } else {
+                        [...select_one].forEach(one => one.checked = false);
+                        [...select_all].forEach(all2 => all2.checked = false);
+                        total_price = 0;
+                        span_price.innerText = String(total_price)
+                    }
+                }
+            });
+        delete_select.onclick = () => {
+            let selected = [...document.querySelectorAll('input[name=select_one]')].filter(el => el.checked);
+            console.log(selected)
+            selected.forEach(el => {
+                // console.log(el.parentElement.parentElement.lastElementChild)
+                el.parentElement.parentElement.lastElementChild.click();
+            })
+        }
+    } else location.href = 'login.html';
+</script>
+</html>

@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        .box {
+            margin: 40px auto auto;
+            width: 310px;
+            height: 310px;
+            /*background-color: pink;*/
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+        }
+
+        .box > input::before {
+            content: "*";
+            color: red;
+        }
+
+        .box > input {
+            height: 28px;
+            width: 308px;
+            border: 1px solid #d7d6db;
+            border-radius: 4px;
+            text-indent: 1em;
+        }
+
+        button {
+            height: 28px;
+            width: 308px;
+            border-radius: 4px;
+            color: white;
+            background-color: #157efb;
+        }
+
+        button::after {
+            content: '';
+            width: 310px;
+            height: 1px;
+            background-color: #e5e5e5;
+            position: absolute;
+            left: 0;
+            bottom: -12px;
+        }
+
+        .box > h1 {
+            font-size: 22px;
+        }
+
+        .box > p {
+            font-size: 13px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="box">
+    <h1>欢迎注册</h1>
+    <p>提示注册账号的同时系统会自动生成钱包.</p>
+    <input type="text" placeholder="用户名">
+    <input type="password" placeholder="密码">
+    <input type="password" placeholder="请再次输入密码">
+    <input type="text" placeholder="昵称">
+    <button>提交</button>
+</div>
+
+<script  src="js/axios.js"></script>
+<script>
+
+    axios.defaults.baseURL = 'http://localhost:8888/';
+    // axios.get('/test/first')
+    //     .then(res => {
+    //         console.log(res.data);
+    //     })
+    //     .catch(error => {
+    //         console.log(error);
+    //     });
+    //
+    // axios.get('/test/second')
+    //     .then(res => {
+    //         console.log(res.data.message);
+    //     })
+    //     .catch(error => {
+    //         console.log(error);
+    //     });
+    //
+    // axios.get('/test/third', {
+    //     params: {
+    //         name: "hy",
+    //         age: 20,
+    //         }
+    //     })
+    //     .then(res => {
+    //         console.log(res.data.message);
+    //     })
+    //     .catch(error => {
+    //         console.log(error);
+    //     });
+    //
+    // axios({
+    //     url: '/test/fourth',
+    //     method: 'post',
+    //     headers: {
+    //         'Content-Type': 'application/x-www-form-urlencoded',
+    //     },
+    //     data: {
+    //         name: "hy",
+    //         age: 20,
+    //     },
+    // })
+    //     .then(res => {
+    //     console.log(res.data.message)
+    // })
+
+    // let data1 = Object.keys({name: 'zs', age: 20}).map(key => {
+    //   return encodeURIComponent(key) + '=' + encodeURIComponent({name: 'zs', age: 20}[key]);
+    // }).join('&');
+    // console.log(data1);
+    // axios.post('/test/fourth', {name: 'zs', age: 20}, {headers: {'Content-Type': 'application/x-www-form-urlencoded'}}).then(res => console.log(res))
+
+    // axios.post(
+    //     'users/register',
+    //     {username: 'hy2606_', password: "hy2606", rpassword: "hy2606", nickname: "lsydm"},
+    //     {headers: {'Content-Type': 'application/x-www-form-urlencoded'}}
+    // ).then(res => console.log(res));
+
+    let box = document.querySelector('.box');
+    let inputs = [...box.querySelectorAll('input')];
+    let btn = document.querySelector('button');
+
+    btn.onclick = ev => {
+        // ev.preventDefault();
+        if(inputs.some(item => item.value === '')) return console.log('信息不全');
+
+        axios.post(
+            'users/register',
+            {
+                username: inputs[0].value,
+                password: inputs[1].value,
+                rpassword: inputs[2].value,
+                nickname: inputs[3].value,
+            },
+            {
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                }
+            }
+        ).then(res => {
+            if (res.data.code) {
+                alert('注册成功');
+                location.href = 'login.html';
+            } else alert(res.data.message);
+        })
+    }
+
+
+
+</script>
+</body>
+</html>

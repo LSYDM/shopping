@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="./css/good_detail.css">
+</head>
+<body>
+    <header>
+        <ul>
+            <li>湖北</li>
+            <li>username</li>
+        </ul>
+        <ul>
+            <li class="cart">购物车</li>
+            <li>2</li>
+            <li>个人中心</li>
+        </ul>
+    </header>
+    <div class="good_detail">
+        <div class="left">
+            <img src="" alt="">
+            <div class="mask"></div>
+        </div>
+        <div class="right">
+            <p class="title"></p>
+            <div class="price">
+                <span>价格</span>
+                <p></p>
+            </div>
+            <button class="add_good">加入购物车</button>
+            <div class="magnifier">
+                <img src="" alt="">
+            </div>
+        </div>
+    </div>
+</body>
+<script src="js/axios.js"></script>
+<script>
+    let good_detail = document.querySelector('.good_detail'),
+        div_left = document.querySelector('.left'),
+        div_right = document.querySelector('.right'),
+        left_img = document.querySelector('.left > img'),
+        mask = document.querySelector('.mask'),
+        magnifier = document.querySelector('.magnifier'),
+        magnifier_img = document.querySelector('.magnifier > img'),
+        btn = document.querySelector('button.add_good'),
+        // goods_cart = (new Function('', `return ${localStorage.getItem('goods_cart')}`))() ?? [],
+        to_cart = document.querySelector('.cart');
+
+
+    axios.defaults.baseURL = 'http://localhost:8888/';
+    if (localStorage.getItem('detail_clear')) {
+        localStorage.removeItem('detail_clear');
+        localStorage.removeItem('detail');
+    }
+
+    let id = Number(location.search.replace('?goods_id=', ''));
+    if (id) {
+        axios.get('goods/item', {
+            params: {
+                id,
+            }
+        }).then(res => {
+            // console.log(res.data.info);
+            left_img.setAttribute('src', res.data.info.img_big_logo);
+            good_detail.lastElementChild.children[0].innerText = res.data.info.title;
+            good_detail.lastElementChild.children[1].lastElementChild.innerText = `￥${res.data.info.price}`;
+            magnifier_img.setAttribute('src', res.data.info.img_big_logo);
+            magnifier.style.display = 'none';
+            magnifier_img.style.display = 'none';
+            btn.onclick = () => {
+                // goods_cart.push({
+                //     goods_id: res.data.info.goods_id,
+                //     img_big_logo: res.data.info.img_big_logo,
+                //     title: res.data.info.title,
+                //     price: res.data.info.price,
+                // });
+                // console.log(JSON.stringify(goods_cart));
+                // localStorage.setItem('goods_cart', JSON.stringify(goods_cart));
+                let user_id = Number(localStorage.getItem('user_id'));
+                if (user_id) {
+                    async function add_good() {
+                        return axios.post('cart/add', {
+                            id: user_id,
+                            goodsId: res.data.info.goods_id,
+                        },
+                        {
+                            headers: {
+                                authorization: localStorage.getItem('token'),
+                                'Content-Type': 'application/x-www-form-urlencoded',
+                            }
+                        })
+                    }
+                    add_good().then(res => {
+                        if (res.data.code === 1) {
+                            // console.log(res)
+                            let add_message = document.createElement('p');
+                            add_message.innerText = '商品已成功加入购物车!';
+                            add_message.style.color = 'lightgreen';
+                            add_message.style.fontSize = '18px';
+                            add_message.style.fontWeight = 'bold';
+                            good_detail.lastElementChild.appendChild(add_message);
+                            setTimeout(() => {
+                                add_message.remove();
+                            }, 1200);
+                        } else {
+                            localStorage.setItem('detail', String(res.data.info.goods_id))
+                            location.href = 'login.html';
+                        }
+                    });
+                } else {
+                    localStorage.setItem('detail', String(res.data.info.goods_id))
+                    location.href = 'login.html';
+                }
+                // let add_message = document.createElement('p');
+                // add_message.innerText = '商品已成功加入购物车!';
+                // add_message.style.color = 'lightgreen';
+                // add_message.style.fontSize = '18px';
+                // add_message.style.fontWeight = 'bold';
+                // good_detail.lastElementChild.appendChild(add_message);
+                // setTimeout(() => {
+                //     add_message.remove();
+                // }, 4000);
+                // btn.setAttribute('disabled', '');
+            }
+        });
+    } else location.href = 'goods_list.html';
+
+
+
+    div_left.onmouseenter = ev => {
+        magnifier_img.style.display = 'block';
+        magnifier.style.display = 'block';
+        mask.style.display = 'block';
+    }
+
+    div_left.onmousemove = ev => {
+        let x = ev.pageX;
+        let y = ev.pageY;
+
+        let l = x - div_left.offsetLeft - div_left.clientLeft - mask.offsetWidth / 2;
+        let t = y - div_left.offsetTop - div_left.clientTop - mask.offsetHeight / 2;
+
+        if(l < 0){
+            l = 0;
+        }
+        if(t < 0){
+            t = 0;
+        }
+        if(l > div_left.clientWidth - mask.clientWidth){
+            l = div_left.clientWidth - mask.clientWidth;
+        }
+        if(t > div_left.clientHeight - mask.clientHeight){
+            t = div_left.clientHeight - mask.clientHeight;
+        }
+
+        mask.style.left = l + 'px';
+        mask.style.top = t + 'px';
+        magnifier_img.style.left = -l*2 + 'px';
+        magnifier_img.style.top = -t*2 + 'px';
+    }
+
+    div_left.onmouseleave = ev => {
+        magnifier_img.style.display = 'none';
+        magnifier.style.display = 'none';
+        mask.style.display = 'none';
+    }
+
+    to_cart.onclick = () => {
+        location.href = 'cart.html';
+    }
+
+</script>
+</html>
