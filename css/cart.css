@@ -1,0 +1,229 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+ul {
+    list-style: none;
+}
+
+header {
+    width: 1237px;
+    height: 45px;
+    margin: 0 auto;
+    background-color: #e3e4e6;
+    display: flex;
+    justify-content: space-between;
+}
+
+header ul {
+    display: flex;
+    height: 100%;
+}
+
+header ul li {
+    width: 117px;
+    height: 100%;
+    line-height: 45px;
+    font-size: 13px;
+    color: #474749;
+    text-align: center;
+    position: relative;
+    cursor: pointer;
+}
+
+header ul :not(:last-child)::after {
+    content: '';
+    width: 1px;
+    height: 10px;
+    background-color: #c3c3c3;
+    position: absolute;
+    right: -1px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+table {
+    /*border-collapse: collapse;*/
+    width: 1237px;
+    /*background-color: #f3f3f3;*/
+    margin: 0 auto;
+    /*border: 1px solid red;*/
+    box-sizing: border-box;
+}
+
+table > thead > tr {
+    display: flex;
+}
+
+table > thead > tr > th {
+    background-color: pink;
+    /*border: 1px solid red;*/
+    height: 54px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+table > thead > tr > th:first-child {
+    width: 65px;
+    /*padding-left: 12px;*/
+    box-sizing: border-box;
+}
+
+table > thead > tr > :nth-child(2) {
+    width: 587px;
+}
+
+table > thead > tr > :nth-child(n+3) {
+    width: 195px;
+}
+
+table > tbody > tr > :nth-child(4) > div {
+    width: 100px;
+    height: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border: 1px solid #c3c3c3;
+}
+
+table > tbody > tr > :nth-child(4) > div > span {
+    display: block;
+}
+
+table > tbody > tr > :nth-child(4) > div > button {
+    width: 25px;
+    height: 25px;
+}
+
+table > tbody > tr {
+    display: flex;
+    font-size: 20px;
+}
+
+table > tbody > tr > :nth-child(1) {
+    width: 65px;
+    height: 147px;
+    position: relative;
+}
+
+table > tbody > tr > :nth-child(1) > input {
+    position: absolute;
+    top: 25px;
+    left: 12px;
+}
+
+table > tbody > tr > :nth-child(2) {
+    width: 587px;
+    height: 147px;
+    display: flex;
+    align-items: center;
+}
+
+table > tbody > tr > :nth-child(2) > img {
+    width: 100px;
+    height: 100px;
+    border: 1px solid #ecf0f1;
+    background-color: #c674c6;
+}
+
+table > tbody > tr > :nth-child(2) > p {
+    padding-left: 12px;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+    line-height: 1.5;
+}
+
+table > tbody > tr > :nth-child(n+3) {
+    width: 195px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+table > tbody > tr > :nth-child(5):hover {
+    color: red;
+}
+
+table > tbody > tr > td {
+    width: 100px;
+    height: 147px;
+    /*background-color: skyblue;*/
+    /*border: 1px solid #f2f2f2;*/
+    border-top: 3px solid #aaaaaa;
+}
+
+footer {
+    width: 1235px;
+    height: 63px;
+    border: 1px solid #efefef;
+    margin: 0 auto;
+    padding-left: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-sizing: border-box;
+    cursor: default;
+}
+
+footer button {
+    width: 117px;
+    height: 100%;
+    line-height: 61px;
+    font-size: 22px;
+    font-weight: 700;
+    color: white;
+    background-color: #e64346;
+    border: none;
+}
+
+footer div input {
+    vertical-align: middle;
+}
+
+footer div span {
+    font-size: 13px;
+    color: #666668;
+}
+
+footer div > :nth-child(3):hover {
+    cursor: pointer;
+}
+
+footer > :last-child {
+    width: 400px;
+    height: 100%;
+    /*background-color: skyblue;*/
+    display: flex;
+    position: relative;
+}
+
+footer > :last-child > :nth-child(1) {
+    display: block;
+    height: 100%;
+    line-height: 63px;
+}
+
+footer > :last-child > :nth-child(2) {
+    display: flex;
+    height: 100%;
+    line-height: 63px;
+    margin-left: 20px;
+}
+
+footer > :last-child > :nth-child(2) > span {
+    color: red;
+    font-size: 22px;
+    display: block;
+    height: 100%;
+    line-height: 63px;
+    margin-left: 5px;
+}
+
+footer > :last-child > button {
+    position: absolute;
+    right: 0;
+}

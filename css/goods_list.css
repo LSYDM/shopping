@@ -1,0 +1,238 @@
+* {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+body {
+    background-color: #f5f6fa;
+}
+
+header {
+    width: 1620px;
+    height: 45px;
+    margin: 0 auto;
+    /*background-color: pink;*/
+    display: flex;
+    justify-content: space-between;
+}
+
+header ul {
+    display: flex;
+    height: 100%;
+}
+
+header ul li {
+    width: 117px;
+    height: 100%;
+    line-height: 45px;
+    font-size: 13px;
+    color: #474749;
+    text-align: center;
+    position: relative;
+    cursor: pointer;
+}
+
+header ul :not(:last-child)::after {
+    content: '';
+    width: 1px;
+    height: 10px;
+    background-color: #c3c3c3;
+    position: absolute;
+    right: -1px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+nav {
+    margin: 0 auto;
+    width: 1620px;
+    background: linear-gradient(to bottom, #ed5050, #f1b0b0);
+    padding-top: 40px;
+}
+
+nav > .search {
+    width: 976px;
+    height: 50px;
+    position: relative;
+    margin: 0 auto;
+    display: flex;
+    /*border-radius: 6px;*/
+    background-color: white;
+    border-radius: 6px;
+}
+
+nav > .search > input {
+    display: block;
+    width: 870px;
+    height: 50px;
+    line-height: 50px;
+    /*background-color: skyblue;*/
+    border: none;
+    border-radius: 6px;
+    text-indent: 2em;
+    outline: none;
+}
+
+nav > .search > button {
+    width: 100px;
+    height: 45px;
+    line-height: 45px;
+    border-radius: 5px;
+    font-size: 20px;
+    font-weight: 700;
+    color: white;
+    background-color: #ff0d26;
+    position: absolute;
+    right: 3px;
+    top: 50%;
+    transform: translateY(-50%);
+    border: none;
+}
+
+.filter_menu {
+    width: 100%;
+    margin-top: 50px;
+}
+
+.filter_menu ul {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.filter_menu ul li {
+    width: 80px;
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
+    background-color: white;
+    margin-left: 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-bottom: 10px;
+}
+
+.filter_menu ul > :first-child {
+    cursor: default;
+}
+
+.filter_menu ul li.active {
+    background-color: red;
+}
+
+.goods {
+    margin: 0 auto;
+    width: 1620px;
+    background-color: white;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+}
+
+.goods > .good {
+    width: 308px;
+    height: 458px;
+    border-radius: 11px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: 5px;
+}
+
+.goods > .good > img {
+    width: 300px;
+    height: 300px;
+    /*background-color: orange;*/
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+.goods > .good > p {
+    width: 300px;
+    /*height: 80px;*/
+    /*background-color: red;*/
+    padding-top: 15px;
+    font-size: 20px;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+}
+
+.goods > .good > span {
+    display: block;
+    width: 300px;
+    height: 72px;
+    padding-top: 8px;
+    line-height: 72px;
+    color: red;
+    font-size: 22px;
+    font-weight: 700;
+}
+
+footer {
+    width: 1620px;
+    height: 50px;
+    /*background-color: skyblue;*/
+    margin: 10px auto 0;
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+footer > ul > li.active {
+    background-color: red;
+}
+
+footer > ul {
+    display: flex;
+    width: 400px;
+    height: 45px;
+    background-color: white;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto;
+    position: relative;
+}
+
+footer > ul > li {
+    width: 40px;
+    height: 40px;
+    /*background-color: pink;*/
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border: 1px solid #cdcdcd;
+}
+
+footer > ul > :first-child, footer > ul > :last-child {
+    width: 60px;
+    position: absolute;
+}
+
+footer > ul > :last-child {
+    right: 0;
+}
+
+footer > ul > :first-child {
+    left: 0;
+}
+
+footer > input {
+    width: 38px;
+    height: 38px;
+    text-align: center;
+    font-size: 18px;
+    position: absolute;
+    right: 500px;
+    border: 1px solid #cdcdcd;
+}
+
+footer > button {
+    width: 80px;
+    height: 40px;
+    position: absolute;
+    right: 410px;
+}

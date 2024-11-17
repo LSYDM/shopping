@@ -1,0 +1,148 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+ul {
+    list-style: none;
+}
+
+header {
+    width: 1513px;
+    height: 45px;
+    margin: 0 auto;
+    background-color: #e3e4e6;
+    display: flex;
+    justify-content: space-between;
+}
+
+header ul {
+    display: flex;
+    height: 100%;
+}
+
+header ul li {
+    width: 117px;
+    height: 100%;
+    line-height: 45px;
+    font-size: 13px;
+    color: #474749;
+    text-align: center;
+    position: relative;
+    cursor: pointer;
+}
+
+header ul :not(:last-child)::after {
+    content: '';
+    width: 1px;
+    height: 10px;
+    background-color: #c3c3c3;
+    position: absolute;
+    right: -1px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.good_detail {
+    width: 1513px;
+    height: 563px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+}
+
+.good_detail > .left {
+    width: 563px;
+    height: 563px;
+    position: relative;
+}
+
+.good_detail > .left > img {
+    width: 563px;
+    height: 563px;
+    display: block;
+    border: 1px solid #cdcdcd;
+}
+
+.good_detail > .left > .mask {
+    width: 280px;
+    height: 280px;
+    background-color: rgba(142, 188, 34, 0.6);
+    position: absolute;
+    left: 0;
+    top: 0;
+    display: none;
+}
+
+.good_detail > .right {
+    width: 924px;
+    height: 100%;
+    /*background-color: skyblue;*/
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+.good_detail > .right > :nth-child(n) {
+    margin-top: 15px;
+}
+
+.good_detail > .right > .title {
+    font-size: 20px;
+    font-weight: 600;
+    color: #646464;
+    width: 400px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.good_detail > .right > .price {
+    width: 100%;
+    height: 55px;
+    line-height: 55px;
+    background-color: #f3f3f3;
+    display: flex;
+}
+
+.good_detail > .right > .price > span {
+    display: block;
+    width: 70px;
+    text-align: center;
+    font-size: 14px;
+    letter-spacing: 10px;
+    color: #919191;
+}
+
+.good_detail > .right > .price > p {
+    font-size: 22px;
+    font-weight: 600;
+    color: #ee3b4e;
+}
+
+.good_detail > .right > button {
+    width: 177px;
+    height: 58px;
+    font-size: 22px;
+    font-weight: 700;
+    text-align: center;
+    line-height: 58px;
+    color: white;
+    background-color: #df3133;
+    border: none;
+}
+
+.good_detail > .right > .magnifier {
+    width: 565px;
+    height: 565px;
+    position: absolute;
+    top: -15px;
+    left: 0;
+    overflow: hidden;
+}
+
+.good_detail > .right > .magnifier > img {
+    width: 1130px;
+    height: 1130px;
+    position: absolute;
+}
